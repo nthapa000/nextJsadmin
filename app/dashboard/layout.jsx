@@ -1,6 +1,7 @@
 import Navbar from "../ui/dashboard/navbar/navbar"
 import Sidebar from "../ui/dashboard/sidebar/sidebar"
 import styles from "../ui/dashboard/dashboard.module.css"
+import Footer from "../ui/dashboard/footer/footer"
 
 const layout = ({ children }) => {
   return (
@@ -12,6 +13,7 @@ const layout = ({ children }) => {
            < Navbar/>
            {children}
            {/* so that we can export more children  */}
+           <Footer />
         </div>
     </div>
   )
