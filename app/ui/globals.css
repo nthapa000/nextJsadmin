@@ -1,0 +1,26 @@
+:root{
+    --bg: #151c2c;
+    --bgSoft: #182237;
+    --text: white;
+    --textSoft: #b7bac1;
+}
+/* Setting color for background and text */
+
+/* Universal selector making margin padding etc to zero */
+*{
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* setting up the background-color and color */
+body{
+    background-color: var(--bg);
+    color: var(--text);
+}
+
+a{
+    color: inherit;
+    text-decoration: none;
+    /* removing underline */
+}
