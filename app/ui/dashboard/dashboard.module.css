@@ -13,3 +13,27 @@
     flex: 4;
 }
 
+.wrapper{
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.main{
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card{
+    display:flex;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.side{
+    flex: 1;
+}
+
