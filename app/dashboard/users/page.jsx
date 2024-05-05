@@ -5,9 +5,11 @@ import styles from "@/app/ui/dashboard/users/user.module.css";
 import Image from "next/image";
 import Link from "next/link";
 
-const UsersPage = async () => {
-  const  users = await fetchUsers();
-
+const UsersPage = async ({searchParams}) => {
+  const q = searchParams?.q || "";
+  // can be empty if it doesn't exist then also it is empty
+  const  users = await fetchUsers(q);
+  // console.log(users)
   return (
     <div className={styles.container}>
       <div className={styles.top}>
@@ -29,7 +31,9 @@ const UsersPage = async () => {
         </thead>
         <tbody>
           {users.map((user) => (
+            
             <tr key={user.id}>
+              {/* {console.log(user.id)} */}
               <td>
                 <div className={styles.user}>
                   <Image

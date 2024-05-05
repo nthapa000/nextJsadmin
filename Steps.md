@@ -26,3 +26,4 @@ Breifly going over project setup
 -----------------------------------------------------------
 
 * install mongoose for schema validation, we will be able to connect to our database and create a model
+* npm install use-debounce@9.0.4
