@@ -1,16 +1,17 @@
-import React from "react";
-import styles from "@/app/ui/dashboard/users/user.module.css";
-import Search from "@/app/ui/dashboard/search/search";
-import Link from "next/link";
-import Image from "next/image";
+import { fetchUsers } from "@/app/lib/data";
 import Pagination from "@/app/ui/dashboard/pagination/pagination";
+import Search from "@/app/ui/dashboard/search/search";
+import styles from "@/app/ui/dashboard/users/user.module.css";
+import Image from "next/image";
+import Link from "next/link";
 
-// we will have search will be functional
-const UserPage = () => {
+const UsersPage = async () => {
+  const  users = await fetchUsers();
+
   return (
     <div className={styles.container}>
       <div className={styles.top}>
-        <Search placeholder={"Search for a user..."} />
+        <Search placeholder="Search for a user..." />
         <Link href="/dashboard/users/add">
           <button className={styles.addButton}>Add New</button>
         </Link>
@@ -27,42 +28,46 @@ const UserPage = () => {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>
-              <div className={styles.user}>
-                <Image
-                  src="/noavatar.png"
-                  alt=""
-                  width={40}
-                  height={40}
-                  className={styles.userImage}
-                />
-              </div>
-            </td>
-            <td>Jogn@gmail.com</td>
-            <td>12.01.2024</td>
-            <td>Admin</td>
-            <td>active</td>
-            <td>
-              <div className={styles.buttons}>
-                <Link href="/dashboard/users/test">
-                  <button className={`${styles.button} ${styles.view}`}>
-                    {" "}
-                    View
-                  </button>
-                </Link>
-                <button className={`${styles.button} ${styles.delete}`}>
-                  {" "}
-                  Delete
-                </button>
-              </div>
-            </td>
-          </tr>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <td>
+                <div className={styles.user}>
+                  <Image
+                    src={"/noavatar.png"}
+                    alt=""
+                    width={40}
+                    height={40}
+                    className={styles.userImage}
+                  />
+                  {user.username}
+                </div>
+              </td>
+              <td>{user.email}</td>
+              <td>{user.createdAt?.toString().slice(4, 16)}</td>
+              <td>{user.isAdmin ? "Admin" : "Client"}</td>
+              <td>{user.isActive ? "active" : "passive"}</td>
+              <td>
+                <div className={styles.buttons}>
+                  <Link href={`/dashboard/users/${user.id}`}>
+                    <button className={`${styles.button} ${styles.view}`}>
+                      View
+                    </button>
+                  </Link>
+                  <form >
+                    <input type="hidden" name="id" value={(user.id)} />
+                    <button className={`${styles.button} ${styles.delete}`}>
+                      Delete
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
-      <Pagination />
+      <Pagination  />
     </div>
   );
 };
 
-export default UserPage;
+export default UsersPage;
