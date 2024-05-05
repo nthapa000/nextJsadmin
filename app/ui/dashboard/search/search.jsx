@@ -11,6 +11,8 @@ const Search = ({placeholder}) => {
 
   const handleSearch = useDebouncedCallback((e)=>{
     const params = new URLSearchParams(searchParams)
+    params.set("page",1)
+    // it will reset to page one whenever we write something
 
     if(e.target.value){
       // searching for every character can be expensive hence we will search only if we have more than three character , we can also add debounce 
