@@ -22,3 +22,7 @@ Breifly going over project setup
 -----------------------------------------------------
 
 * will be using reCharts library for charts
+
+-----------------------------------------------------------
+
+* install mongoose for schema validation, we will be able to connect to our database and create a model
