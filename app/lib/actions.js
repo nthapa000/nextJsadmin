@@ -1,8 +1,9 @@
 "use server"
 import { revalidatePath } from "next/cache";
-import { User } from "./model";
+import { Product, User } from "./model";
 import { connectToDB } from "./util";
 import { redirect } from "next/navigation";
+import bcrypt from "bcrypt";
 
 export const addUser = async (formData) => {
     
@@ -11,10 +12,13 @@ export const addUser = async (formData) => {
   // Create a new user and edit to mongoDB
   try {
     connectToDB();
+    const salt = await bcrypt.genSalt(10)
+    // password is now crypted
+    const hashedPassword = await bcrypt.hash(password,salt)
     const newUser = new User({
       username,
       email,
-      password,
+      password:hashedPassword,
       phone,
       address,
       isAdmin,
@@ -30,3 +34,30 @@ export const addUser = async (formData) => {
   revalidatePath("/dashboard/users");
   redirect("/dashboard/users");
 };
+
+export const addProduct = async (formData) => {
+    
+    const { title, desc, price, stock, color, size } =
+      Object.fromEntries(formData);
+    // Create a new user and edit to mongoDB
+    try {
+      connectToDB();
+      const newProduct = new Product({
+        title,
+        desc,
+        price,
+        stock,
+        color,
+        size
+      });
+  
+      await newProduct.save();
+    } catch (err) {
+      console.log(err);
+      throw new Error("Failed to create user");
+    }
+  //   will automatically refresh the data
+    revalidatePath("/dashboard/products");
+    redirect("/dashboard/products");
+  };
+  
