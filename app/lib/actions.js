@@ -147,13 +147,16 @@ export const updateProduct = async (formData) => {
   redirect("/dashboard/products");
 };
 
-export const authenticate = async (formData) => {
+export const authenticate = async (prevState, formData) => {
   const { username, password } = Object.fromEntries(formData);
 //   console.log(password);
   try {
     await signIn("credentials", { username, password });
   } catch (err) {
-    console.log(err);
+    if (err.message.includes("CredentialsSignin")) {
+      // console.log("Bhai tera desi hai")
+      return "Wrong Credentials";
+    }
     throw err;
   }
 };
