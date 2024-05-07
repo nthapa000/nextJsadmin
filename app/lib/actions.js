@@ -4,6 +4,7 @@ import { Product, User } from "./model";
 import { connectToDB } from "./util";
 import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
+import {signIn} from "../auth"
 
 export const addUser = async (formData) => {
   const { username, email, password, phone, address, isAdmin, isActive } =
@@ -28,6 +29,35 @@ export const addUser = async (formData) => {
   } catch (err) {
     console.log(err);
     throw new Error("Failed to create user");
+  }
+  //   will automatically refresh the data
+  revalidatePath("/dashboard/users");
+  redirect("/dashboard/users");
+};
+
+export const updateUser = async (formData) => {
+  const { id, username, email, password, phone, address, isAdmin, isActive } =
+    Object.fromEntries(formData);
+  // Create a new user and edit to mongoDB
+  try {
+    connectToDB();
+    //   currently if there are parts where we don't write anything then there will be an empty string send to use we want that we don't want to update the empty string we only want to update thing which we want
+    const updateField = {
+      username,
+      email,
+      password,
+      isAdmin,
+      isActive,
+      phone,
+      address,
+    };
+    Object.keys(updateField).forEach(
+      (key) => (updateField[key] == "" || undefined) && delete updateField[key]
+    );
+    await User.findByIdAndUpdate(id, updateField);
+  } catch (err) {
+    console.log(err);
+    throw new Error("Failed to update user");
   }
   //   will automatically refresh the data
   revalidatePath("/dashboard/users");
@@ -61,7 +91,7 @@ export const addProduct = async (formData) => {
 
 export const deleteProduct = async (formData) => {
   const { id } = Object.fromEntries(formData);
-//   console.log(id);
+  //   console.log(id);
   // Create a new user and edit to mongoDB
   try {
     connectToDB();
@@ -75,17 +105,55 @@ export const deleteProduct = async (formData) => {
 };
 
 export const deleteUser = async (formData) => {
-    const { id } = Object.fromEntries(formData);
-    // console.log(id);
-    // Create a new user and edit to mongoDB
-    try {
-      connectToDB();
-      await User.findByIdAndDelete(id);
-    } catch (err) {
-      console.log(err);
-      throw new Error("Failed to delete User");
-    }
-    //   will automatically refresh the data
-    revalidatePath("/dashboard/users");
-  };
-  
+  const { id } = Object.fromEntries(formData);
+  // console.log(id);
+  // Create a new user and edit to mongoDB
+  try {
+    connectToDB();
+    await User.findByIdAndDelete(id);
+  } catch (err) {
+    console.log(err);
+    throw new Error("Failed to delete User");
+  }
+  //   will automatically refresh the data
+  revalidatePath("/dashboard/users");
+};
+
+export const updateProduct = async (formData) => {
+  const { id, title, desc, price, stock, color, size } =
+    Object.fromEntries(formData);
+  // Create a new user and edit to mongoDB
+  try {
+    connectToDB();
+    //   currently if there are parts where we don't write anything then there will be an empty string send to use we want that we don't want to update the empty string we only want to update thing which we want
+    const updateField = {
+      title,
+      desc,
+      price,
+      stock,
+      color,
+      size,
+    };
+    Object.keys(updateField).forEach(
+      (key) => (updateField[key] == "" || undefined) && delete updateField[key]
+    );
+    await Product.findByIdAndUpdate(id, updateField);
+  } catch (err) {
+    console.log(err);
+    throw new Error("Failed to update product");
+  }
+  //   will automatically refresh the data
+  revalidatePath("/dashboard/products");
+  redirect("/dashboard/products");
+};
+
+export const authenticate = async (formData) => {
+  const { username, password } = Object.fromEntries(formData);
+//   console.log(password);
+  try {
+    await signIn("credentials", { username, password });
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};

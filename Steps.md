@@ -28,3 +28,4 @@ Breifly going over project setup
 * install mongoose for schema validation, we will be able to connect to our database and create a model
 * npm install use-debounce@9.0.4
 * npm i bcrypt@5.1.1
+* npm i next-auth@5.0.0-beta.3
