@@ -1,4 +1,4 @@
-"use server"
+"use server";
 import { revalidatePath } from "next/cache";
 import { Product, User } from "./model";
 import { connectToDB } from "./util";
@@ -6,19 +6,18 @@ import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
 
 export const addUser = async (formData) => {
-    
   const { username, email, password, phone, address, isAdmin, isActive } =
     Object.fromEntries(formData);
   // Create a new user and edit to mongoDB
   try {
     connectToDB();
-    const salt = await bcrypt.genSalt(10)
+    const salt = await bcrypt.genSalt(10);
     // password is now crypted
-    const hashedPassword = await bcrypt.hash(password,salt)
+    const hashedPassword = await bcrypt.hash(password, salt);
     const newUser = new User({
       username,
       email,
-      password:hashedPassword,
+      password: hashedPassword,
       phone,
       address,
       isAdmin,
@@ -30,34 +29,63 @@ export const addUser = async (formData) => {
     console.log(err);
     throw new Error("Failed to create user");
   }
-//   will automatically refresh the data
+  //   will automatically refresh the data
   revalidatePath("/dashboard/users");
   redirect("/dashboard/users");
 };
 
 export const addProduct = async (formData) => {
-    
-    const { title, desc, price, stock, color, size } =
-      Object.fromEntries(formData);
+  const { title, desc, price, stock, color, size } =
+    Object.fromEntries(formData);
+  // Create a new user and edit to mongoDB
+  try {
+    connectToDB();
+    const newProduct = new Product({
+      title,
+      desc,
+      price,
+      stock,
+      color,
+      size,
+    });
+
+    await newProduct.save();
+  } catch (err) {
+    console.log(err);
+    throw new Error("Failed to create user");
+  }
+  //   will automatically refresh the data
+  revalidatePath("/dashboard/products");
+  redirect("/dashboard/products");
+};
+
+export const deleteProduct = async (formData) => {
+  const { id } = Object.fromEntries(formData);
+//   console.log(id);
+  // Create a new user and edit to mongoDB
+  try {
+    connectToDB();
+    await Product.findByIdAndDelete(id);
+  } catch (err) {
+    console.log(err);
+    throw new Error("Failed to delete product");
+  }
+  //   will automatically refresh the data
+  revalidatePath("/dashboard/products");
+};
+
+export const deleteUser = async (formData) => {
+    const { id } = Object.fromEntries(formData);
+    // console.log(id);
     // Create a new user and edit to mongoDB
     try {
       connectToDB();
-      const newProduct = new Product({
-        title,
-        desc,
-        price,
-        stock,
-        color,
-        size
-      });
-  
-      await newProduct.save();
+      await User.findByIdAndDelete(id);
     } catch (err) {
       console.log(err);
-      throw new Error("Failed to create user");
+      throw new Error("Failed to delete User");
     }
-  //   will automatically refresh the data
-    revalidatePath("/dashboard/products");
-    redirect("/dashboard/products");
+    //   will automatically refresh the data
+    revalidatePath("/dashboard/users");
   };
   
