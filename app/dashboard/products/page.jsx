@@ -4,8 +4,13 @@ import Search from '@/app/ui/dashboard/search/search'
 import Image from 'next/image'
 import styles from '@/app/ui/dashboard/products/products.module.css'
 import Pagination from '@/app/ui/dashboard/pagination/pagination'
+import {fetchProducts} from "@/app/lib/data"
 
-const ProductsPage = () => {
+const ProductsPage = async({searchParams}) => {
+  const q = searchParams?.q || "";
+  // can be empty if it doesn't exist then also it is empty
+  const page = searchParams?.page || 1;
+  const  {count, products} = await fetchProducts(q,page);
   return (
     <div className={styles.container}>
     <div className={styles.top}>
@@ -26,41 +31,42 @@ const ProductsPage = () => {
         </tr>
       </thead>
       <tbody>
-        <tr>
+         {products.map(product => (
+        <tr key={product.id}>
           <td>
             <div className={styles.product}>
               <Image
+              // src={product.img || "/noproduct.jpg"}
                 src="/noproduct.jpg"
                 alt=""
                 width={40}
                 height={40}
                 className={styles.productImage}
               />
-              Baweee Iphonee
+              {product.title}
             </div>
           </td>
-          <td>Description</td>
-          <td>$1123</td>
-          <td>13.01.2024</td>
-          <td>75</td>
+          <td>{product.desc}</td>
+          <td>${product.price}</td>
+          <td>{product.createdAt?.toString().slice(4,16)}</td>
+          <td>{product.stock}</td>
           <td>
             <div className={styles.buttons}>
-              <Link href="/dashboard/products/test">
+              <Link href={`/dashboard/products/${product.id}`}>
                 <button className={`${styles.button} ${styles.view}`}>
-                  {" "}
                   View
                 </button>
               </Link>
               <button className={`${styles.button} ${styles.delete}`}>
-                {" "}
                 Delete
               </button>
             </div>
           </td>
         </tr>
+         ))}
       </tbody>
     </table>
-    <Pagination />
+    <Pagination count={count}/>
   </div>
   )
 }
